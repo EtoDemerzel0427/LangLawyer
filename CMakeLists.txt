@@ -5,3 +5,4 @@ set(CMAKE_CXX_STANDARD 20)
 
 add_executable(concept_auto type-constraint-auto.cpp)
 add_executable(decl-auto decl-auto.cpp)
+add_executable(auto-deduce auto-deduce.cpp)
