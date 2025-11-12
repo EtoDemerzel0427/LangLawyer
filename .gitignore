@@ -1,0 +1,38 @@
+# CMake build directories
+/build/
+/build-*/
+/out/
+cmake-build-*/
+
+# CMake cache and generated files
+CMakeCache.txt
+CMakeFiles/
+Makefile
+cmake_install.cmake
+compile_commands.json
+CMakeUserPresets.json
+
+# Conan artifacts (in case of custom folders)
+conanbuild/
+
+# Compiled objects
+*.o
+*.obj
+*.so
+*.dll
+*.dylib
+*.a
+*.lib
+
+# Python virtual environments and caches
+.venv/
+python_env/.venv/
+__pycache__/
+*.py[cod]
+
+# macOS metadata
+.DS_Store
+
+.idea/
+.cache/
+

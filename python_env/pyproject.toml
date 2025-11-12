@@ -1,0 +1,20 @@
+[project]
+name = "langlawyer-tooling"
+version = "0.1.0"
+description = "Pinned tooling environment for the LangLawyer C++ project."
+authors = [
+    { name = "LangLawyer Maintainers" }
+]
+requires-python = "==3.12.*"
+dependencies = [
+    "conan==2.10.2"
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.uv]
+package = false
+
+
