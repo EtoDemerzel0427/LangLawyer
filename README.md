@@ -1,11 +1,11 @@
 # LangLawyer
 
-Small C++ snippets exploring language features and build mechanics. The repository is organised into self-contained subdirectories and is wired up with CMake and Conan so you can reproduce builds across different machines.
+Small C++ snippets exploring language features and build mechanics. The repository is organized into self-contained subdirectories and is wired up with CMake and Conan so you can reproduce builds across different machines.
 
 ## Requirements
 
 - CMake 3.29+
-- A C++20-capable compiler (e.g. clang, Apple clang, or GCC)
+- A C++20-capable compiler (tested with clang / Apple clang; GCC should work; MSVC is not currently supported)
 - [`uv`](https://docs.astral.sh/uv/) for Python toolchain management
 - Git
 
@@ -26,7 +26,7 @@ source .venv/bin/activate
 
 From here you can run Conan either with the activated virtualenv or by prefixing commands with `uv run`.
 
-## 2. Detect (or customise) a Conan profile
+## 2. Detect (or customize) a Conan profile
 
 ```bash
 conan profile detect --force
@@ -50,7 +50,22 @@ conan install . \
 
 Conan places `conan_toolchain.cmake` and preset files under `build/gcc-release/`. Repeat with other `--profile` or `--settings` values as needed.
 
-## 4. Configure and build with CMake
+## 4. Build the project (recommended)
+
+```bash
+conan build . --build-folder=build/gcc-release
+```
+
+This runs the recipe’s `build()` method, which invokes CMake using the toolchain generated in the previous step.
+
+Resulting binaries land inside the same build directory, already split by type:
+
+- Executables → `build/gcc-release/bin/`
+- Libraries → `build/gcc-release/lib/`
+
+### Optional: drive CMake manually
+
+If you want to run CMake yourself:
 
 ```bash
 cmake -S . -B build/gcc-release \
@@ -60,31 +75,39 @@ cmake -S . -B build/gcc-release \
 cmake --build build/gcc-release
 ```
 
-Resulting binaries appear inside the build folder:
+Use `cmake --build … --target <name>` to build a specific target. Enable intermediate compile outputs by adding `-DENABLE_SAVE_TEMPS=ON`.
 
-- `build/gcc-release/build_process/libbuild_process_lib.dylib`
-- `build/gcc-release/build_process/build_process_app`
-- `build/gcc-release/auto/concept_auto`
-- `build/gcc-release/auto/decl_auto`
-- `build/gcc-release/auto/auto_deduce`
+### Keeping intermediate compilation artefacts
 
-Use `cmake --build … --target <name>` to build a specific target.
-
-## 5. (Optional) Let Conan drive the build
-
-Instead of calling CMake manually, you can run:
+To emit `.ii`, `.s`, and other files produced by `-save-temps=obj`, flip the Conan option when installing:
 
 ```bash
-conan build . --output-folder=build/gcc-release
+conan install . \
+  --profile=default \
+  --settings=build_type=Release \
+  --build=missing \
+  --output-folder=build/gcc-release \
+  -o langlawyer/*:save_temps=True
+
+conan build . --build-folder=build/gcc-release
 ```
 
-This uses the recipe in `conanfile.py` (which simply invokes CMake with the detected layout).
+The option maps to the `ENABLE_SAVE_TEMPS` CMake cache variable, so manual CMake invocations can also pass `-DENABLE_SAVE_TEMPS=ON`.
+
+## 5. Recipe internals (`conanfile.py`)
+
+- `exports_sources`: copies the top-level `CMakeLists.txt` plus the `auto/` and `build_process/` trees into Conan’s cache so builds are self-contained.
+- `generators = "CMakeToolchain", "CMakeDeps"`: produces `conan_toolchain.cmake` (compiler flags, std, build options) and `Find*.cmake` modules so future `find_package()` calls resolve to Conan dependencies instead of system libraries.
+- `cmake_layout(self)`: standard folders (`build/<profile>/bin`, `lib`, `generators`, etc.) that match CMake expectations and make `conan build` work without extra arguments.
+- `build()`: spins up CMake configure + build with the generator files. When you run `conan build`, this is the method that executes.
 
 ## Repository layout
 
-- `auto/` – three C++ programs demonstrating `auto` behaviour (`concept_auto`, `decl_auto`, `auto_deduce`)
-- `build_process/` – shared library + app showing symbol visibility and linkage
+- `libs/` – internal libraries (e.g. `build_process_lib`)
+- `snippets/auto/` – three programs demonstrating `auto` behaviour (`concept_auto`, `decl_auto`, `auto_deduce`)
+- `snippets/build_process/` – executable using `build_process_lib` to illustrate linking and build artefacts
 - `python_env/` – reproducible Python environment definition for tooling (`uv` + Conan)
+- `toolchain/` – documentation and helper scripts (pre-commit hook, formatting guidance)
 - `.python-version` – pins Python 3.12.2 for all contributors
 
 ## Cleaning up

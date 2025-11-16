@@ -26,34 +26,32 @@ decltype(auto) bar2() { return foo(); } // return int&
 const int g_value = 42;
 
 // this const actually is stripped off
-const int return_const() {
-    return g_value;
-}
+const int return_const() { return g_value; }
 
 // the const is not preserved even though decltype(g_value) is const int
 // because a copy is returned
 decltype(auto) return_const_with_decltype_auto() {
-    return g_value;  // copy of g_value, so return int
+    return g_value; // copy of g_value, so return int
 }
 
 decltype(auto) return_const_with_decltype_lvalue() {
-    return (g_value);  // we add parentheses to make it an lvalue, so return const int&
+    return (g_value); // we add parentheses to make it an lvalue, so return const int&
 }
-
 
 // this const is preserved
-const int& return_const_ref() {
-    return g_value;
-}
+const int& return_const_ref() { return g_value; }
 
 int main() {
-    std::cout << std::is_reference_v<decltype(bar1())> << '\n'; //  0
-    std::cout << std::is_reference_v<decltype(bar2())> << '\n'; //  1
-    std::cout << std::is_reference_v<decltype(return_const_with_decltype_auto())> << '\n'; // 0
+    std::cout << std::is_reference_v<decltype(bar1())> << '\n';                              //  0
+    std::cout << std::is_reference_v<decltype(bar2())> << '\n';                              //  1
+    std::cout << std::is_reference_v<decltype(return_const_with_decltype_auto())> << '\n';   // 0
     std::cout << std::is_reference_v<decltype(return_const_with_decltype_lvalue())> << '\n'; // 1
 
-    std::cout << std::is_const_v<decltype(return_const())> << '\n';                  // 0
+    std::cout << std::is_const_v<decltype(return_const())> << '\n';                    // 0
     std::cout << std::is_const_v<decltype(return_const_with_decltype_auto())> << '\n'; // 0
-    std::cout << std::is_const_v<std::remove_reference_t<decltype(return_const_with_decltype_lvalue())>> << '\n'; // 1
-    std::cout << std::is_const_v<std::remove_reference_t<decltype(return_const_ref())>> << '\n'; // 1
+    std::cout
+        << std::is_const_v<
+               std::remove_reference_t<decltype(return_const_with_decltype_lvalue())>> << '\n'; // 1
+    std::cout
+        << std::is_const_v<std::remove_reference_t<decltype(return_const_ref())>> << '\n'; // 1
 }

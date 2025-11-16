@@ -1,16 +1,14 @@
 // example that demonstrates the use of concepts with auto
 
-#include <iostream>
 #include <concepts>
+#include <iostream>
 #include <vector>
 
-
-template<typename T>
+template <typename T>
 concept Numeric = std::integral<T> || std::floating_point<T>;
 
-template<typename T>
-void printSum(const std::vector<T>& v) {
-    Numeric auto sum = T{};  // type-constraint auto
+template <typename T> void printSum(const std::vector<T>& v) {
+    Numeric auto sum = T{}; // type-constraint auto
     for (const auto& element : v) {
         sum += element;
     }
@@ -28,8 +26,8 @@ int main() {
     std::cout << "Sum of doubles: ";
     printSum(doubles);
 
-//     std::cout << "Sum of strings: ";
-//     printSum(strings);  // this will not compile
+    //     std::cout << "Sum of strings: ";
+    //     printSum(strings);  // this will not compile
 
     return 0;
 }
