@@ -87,7 +87,7 @@ conan install . \
   --settings=build_type=Release \
   --build=missing \
   --output-folder=build/gcc-release \
-  -o langlawyer/*:save_temps=True
+  -o save_temps=True
 
 conan build . --build-folder=build/gcc-release
 ```
@@ -107,7 +107,7 @@ The option maps to the `ENABLE_SAVE_TEMPS` CMake cache variable, so manual CMake
 - `snippets/auto/` – three programs demonstrating `auto` behaviour (`concept_auto`, `decl_auto`, `auto_deduce`)
 - `snippets/build_process/` – executable using `build_process_lib` to illustrate linking and build artefacts
 - `python_env/` – reproducible Python environment definition for tooling (`uv` + Conan)
-- `toolchain/` – documentation and helper scripts (pre-commit hook, formatting guidance)
+- `toolchain/` – documentation and helper scripts (pre-commit hook, formatting guidance, [Conan & CMake deep dive](toolchain/conan-cmake.md), [Conan 1 vs 2 comparison](toolchain/conan-1-vs-2.md))
 - `.python-version` – pins Python 3.12.2 for all contributors
 
 ## Cleaning up

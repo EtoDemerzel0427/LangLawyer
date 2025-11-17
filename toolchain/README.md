@@ -30,7 +30,7 @@ conan install . \
 conan build . --build-folder=build/gcc-release
 ```
 
-Pass `-o langlawyer/*:save_temps=True` during the install step to surface intermediate compilation artefacts. Use different folders or profiles to target other compilers/configurations.
+Pass `-o save_temps=True` during the install step to surface intermediate compilation artefacts. Use different folders or profiles to target other compilers/configurations.
 
 ## CMake Layout
 
@@ -64,6 +64,7 @@ The hook formats staged C/C++ sources with `clang-format -style=file` and re-sta
 ## Further reading
 
 - [conan-cmake.md](conan-cmake.md) – in-depth explanation of the Conan recipe, generators, CMake targets, and how options propagate through the build.
+- [conan-1-vs-2.md](conan-1-vs-2.md) – side-by-side comparison of the Conan 1 and Conan 2 workflows, including native `conan build` usage.
 
 ## Future Extensions
 
